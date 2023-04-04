@@ -18,16 +18,6 @@ export class UrlService {
   }
 
   async createShortUrl({ id, ip, url }: CreateUrlContract.Request) {
-    const oldUrl = await this.urlRepository.findUniqueForUser({ ip: ip, destination: url });
-    if (oldUrl) {
-      const redisShortUrl = await this.urlMemoryStorageRepository.get(oldUrl.shortUrl);
-      if (!redisShortUrl) {
-        await this.urlMemoryStorageRepository.insert(oldUrl.shortUrl, oldUrl.destination);
-      }
-
-      return oldUrl;
-    }
-
     const savedUrl = await this.urlGenerateService.generateAndSaveShortUrl({ id, ip: ip, destination: url });
     await this.urlMetricsRepository.create(savedUrl.id);
     await this.urlMemoryStorageRepository.insert(savedUrl.shortUrl, savedUrl.destination);
@@ -46,6 +36,10 @@ export class UrlService {
     }
 
     return oldUrl;
+  }
+
+  async findAll(ip: string) {
+    return await this.urlRepository.findAll(ip);
   }
 
   async findById(id: string) {

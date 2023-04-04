@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { HashingService } from '../hashing/hashing.service';
 import { ConfigService } from '@nestjs/config';
 import { UrlRepository } from './repository/url.repository';
 import { UrlIdentifierDto } from './dto/url-identifier.dto';
@@ -11,15 +10,10 @@ export class UrlGenerateService {
   private readonly charset = '01234567879abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
   constructor(
-    private readonly hashingService: HashingService,
     private readonly configService: ConfigService,
     private readonly urlRepository: UrlRepository,
   ) {
     this.shortUrlLength = this.configService.get('SHORT_URL_LENGTH');
-  }
-
-  private async generateHash(destination: string) {
-    return await this.hashingService.hash(destination);
   }
 
   private generateRandomString() {

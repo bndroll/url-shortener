@@ -3,26 +3,38 @@ import { ConfigModule } from '@nestjs/config';
 import { UrlModule } from './url/url.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { BackendUrlGeneratorModule } from './common/url/backend-url-generator.module';
-
-export const getHost = () => {
-  console.log(process.env.REDIS_HOST);
-  return process.env.REDIS_HOST;
-}
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { KafkaProducerProvider } from './common/kafka/providers/kafka-producer.provider';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.development.env'
+      envFilePath: `.${process.env.NODE_ENV.trim()}.env`,
+      isGlobal: true,
     }),
     RedisModule.forRoot({
       config: {
-        host: getHost(),
+        host: process.env.REDIS_HOST,
         port: parseInt(process.env.REDIS_PORT),
       },
     }),
+    ClientsModule.register([
+      {
+        name: 'API_SERVICE',
+        transport: Transport.KAFKA,
+        options: {
+          client: {
+            clientId: 'url-shortener',
+            brokers: [process.env.KAFKA_BROKER_URL],
+          },
+        },
+      },
+    ]),
     UrlModule,
     BackendUrlGeneratorModule,
   ],
+  providers: [KafkaProducerProvider],
+  exports: [KafkaProducerProvider],
 })
 export class AppModule {
 }

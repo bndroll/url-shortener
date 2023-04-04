@@ -25,7 +25,11 @@ export class UrlService {
     return url;
   }
 
-  async findById(id: string, ip) {
+  async findAll(ip: string) {
+    return await this.urlHttpService.requestFindAll(ip);
+  }
+
+  async findById(id: string, ip: string) {
     const url = await this.urlHttpService.requestFindUrl(id);
     if (!url && ip !== url.ip) {
       throw new BadRequestException(UrlErrorMessages.NotFound);
@@ -34,7 +38,7 @@ export class UrlService {
     return url;
   }
 
-  async findDetails(id: string, ip) {
+  async findDetails(id: string, ip: string) {
     const url = await this.urlHttpService.requestFindUrlDetails(id);
     if (!url && ip !== url.ip) {
       throw new BadRequestException(UrlErrorMessages.NotFound);

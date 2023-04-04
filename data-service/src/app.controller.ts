@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { UrlService } from './url/url.service';
 import { UrlMapper } from './url/dto/mappers/url.mapper';
 import { PublicFindUrlDetailsDto, PublicFindUrlDto } from './url/dto/find-url.dto';
@@ -15,6 +15,12 @@ export class AppController {
   async findByShortUrl(@Param('shortUrl') shortUrl: string): Promise<PublicFindUrlDto> {
     const url = await this.urlService.findByShortUrl(shortUrl);
     return this.urlMapper.map(url);
+  }
+
+  @Get()
+  async findAll(@Query('ip') ip: string): Promise<PublicFindUrlDto[]> {
+    const urls = await this.urlService.findAll(ip);
+    return this.urlMapper.mapAll(urls);
   }
 
   @Get(':urlId/part')

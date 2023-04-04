@@ -12,4 +12,13 @@ export class UrlMapper {
       shortUrl: url.shortUrl,
     };
   }
+
+  mapAll(urls: Url[]): PublicFindUrlDto[] {
+    return urls.map(item => ({
+      id: item.id,
+      ip: item.ip,
+      destination: item.destination,
+      shortUrl: item.shortUrl,
+    }))
+  }
 }

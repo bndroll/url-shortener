@@ -1,5 +1,33 @@
 version: '3'
 services:
+  api-service:
+    build:
+      context: .
+      dockerfile: api-service/Dockerfile
+    restart: unless-stopped
+    container_name: api-service
+    depends_on:
+      - data-service
+    ports:
+      - "3000:3000"
+    networks:
+      - network
+
+  data-service:
+    build:
+      context: .
+      dockerfile: data-service/Dockerfile
+    restart: unless-stopped
+    container_name: data-service
+    depends_on:
+      - mongo
+      - redis
+      - broker
+    ports:
+      - ":5050"
+    networks:
+      - network
+
   mongo:
     image: 'mongo:latest'
     container_name: mongo
@@ -19,8 +47,10 @@ services:
     image: redis
     container_name: redis
     restart: unless-stopped
+    networks:
+      - network
     ports:
-      - ':6379'
+      - ":6379"
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -44,7 +74,7 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092,PLAINTEXT_INTERNAL://broker:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1

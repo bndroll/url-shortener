@@ -1,6 +1,4 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { ClientKafka, ClientsModule, Transport } from '@nestjs/microservices';
+import { forwardRef, Module } from '@nestjs/common';
 import { UrlController } from './url.controller';
 import { UrlMemoryStorageRepository } from './repository/url-memory-storage.repository';
 import { UrlService } from './url.service';
@@ -9,37 +7,16 @@ import { RedirectController } from './redirect.controller';
 import { UrlHttpService } from './url-http.service';
 import { BackendUrlGeneratorModule } from '../common/url/backend-url-generator.module';
 import { UrlMapper } from './dto/mappers/url.mapper';
+import { AppModule } from '../app.module';
 
 @Module({
   imports: [
-    ConfigModule,
-    ClientsModule.register([
-      {
-        name: 'API_SERVICE',
-        transport: Transport.KAFKA,
-        options: {
-          client: {
-            clientId: 'url-shortener',
-            brokers: ['localhost:9092'],
-          },
-          consumer: {
-            groupId: `url-shortener-producer`,
-          },
-        },
-      },
-    ]),
+    forwardRef(() => AppModule),
     HttpModule,
     BackendUrlGeneratorModule,
   ],
   controllers: [UrlController, RedirectController],
   providers: [
-    {
-      provide: 'KAFKA_PRODUCER',
-      useFactory: async (client: ClientKafka) => {
-        return client.connect();
-      },
-      inject: ['API_SERVICE'],
-    },
     UrlMemoryStorageRepository,
     UrlService,
     UrlHttpService,

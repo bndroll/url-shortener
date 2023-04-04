@@ -29,6 +29,12 @@ export class UrlController {
     return { id };
   }
 
+  @Get()
+  async findAll(@Ip() ip: string): Promise<PublicFindUrlDto[]> {
+    const urls = await this.urlService.findAll(ip);
+    return this.urlMapper.mapAll(urls);
+  }
+
   @Get(':id')
   async findById(@Param('id') id: string, @Ip() ip: string): Promise<PublicFindUrlDto> {
     const url = await this.urlService.findById(id, ip);

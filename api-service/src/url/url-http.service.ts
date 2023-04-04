@@ -19,6 +19,13 @@ export class UrlHttpService {
     return data;
   }
 
+  async requestFindAll(ip: string) {
+    const { data } = await firstValueFrom(
+      this.httpService.get<PublicFindUrlDto[]>(`${this.configService.get('DATA_SERVICE_URL')}/?ip=${ip}`),
+    );
+    return data;
+  }
+
   async requestFindUrl(id: string) {
     const { data } = await firstValueFrom(
       this.httpService.get<PublicFindUrlDto>(`${this.configService.get('DATA_SERVICE_URL')}/${id}/part`),

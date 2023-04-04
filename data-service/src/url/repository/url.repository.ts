@@ -28,6 +28,10 @@ export class UrlRepository {
     return await this.urlModel.findOne({ destination, ip }).exec();
   }
 
+  async findAll(ip: string) {
+    return await this.urlModel.find({ ip }).exec();
+  }
+
   async findByShortUrl(shortUrl: string) {
     return await this.urlModel.findOne({ shortUrl }).exec();
   }
@@ -47,8 +51,9 @@ export class UrlRepository {
           as: 'metrics',
         },
       },
+      { $unwind: '$metrics' },
       { $addFields: { 'metrics.connectionsCount': { $size: '$metrics.connections' } } },
-      { $unset: ['_id', '__v', 'metrics._id', 'metrics.__v'] },
+      { $unset: ['_id', '__v', 'metrics._id', 'metrics.__v', 'metrics.urlId'] },
     ]).exec())[0];
   }
 

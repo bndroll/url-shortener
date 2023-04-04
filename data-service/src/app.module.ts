@@ -1,17 +1,18 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { getMongoConfig } from './config/mongo.config';
 import { BrokerController } from './broker.controller';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { UrlModule } from './url/url.module';
-import { HashingModule } from './hashing/hashing.module';
 import { AppController } from './app.controller';
+import { ScheduleModule } from '@nestjs/schedule';
+import { getMongoConfig } from './config/mongo.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.development.env'
+      envFilePath: `.${process.env.NODE_ENV.trim()}.env`,
+      isGlobal: true,
     }),
     MongooseModule.forRootAsync(getMongoConfig()),
     RedisModule.forRoot({
@@ -20,8 +21,8 @@ import { AppController } from './app.controller';
         port: parseInt(process.env.REDIS_PORT),
       },
     }),
+    ScheduleModule.forRoot(),
     UrlModule,
-    HashingModule
   ],
   controllers: [BrokerController, AppController],
 })

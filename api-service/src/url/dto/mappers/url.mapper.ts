@@ -8,10 +8,17 @@ export class UrlMapper {
   ) {
   }
 
-  map<T extends { shortUrl: string }>(dto: T): T {
+  map<T extends { shortUrl: string }>(url: T): T {
     return {
-      ...dto,
-      shortUrl: this.backendUrlGeneratorService.build(dto.shortUrl),
+      ...url,
+      shortUrl: this.backendUrlGeneratorService.build(url.shortUrl),
     };
+  }
+
+  mapAll<T extends { shortUrl: string }>(urls: T[]): T[] {
+    return urls.map(item => ({
+      ...item,
+      shortUrl: this.backendUrlGeneratorService.build(item.shortUrl),
+    }));
   }
 }

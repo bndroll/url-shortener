@@ -12,7 +12,7 @@ export class UrlMemoryStorageRepository {
   }
 
   async insert(shortUrl: string, destination: string) {
-    await this.redis.set(this.getKey(shortUrl), destination, 'EX', 86400);
+    await this.redis.set(this.getKey(shortUrl), destination, 'EX', 3600);
   }
 
   async get(shortUrl: string): Promise<string | undefined> {
