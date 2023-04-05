@@ -3,7 +3,7 @@
 /node_modules
 .development.env
 .production.env
-api.http
+../api.http
 
 # Logs
 logs

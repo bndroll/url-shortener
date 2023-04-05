@@ -1,0 +1,22 @@
+POST http://127.0.0.1:3000/url/shorten
+Content-Type: application/json
+
+{
+    "url": "https://google.com/test"
+}
+
+###
+
+GET http://127.0.0.1:3000/url
+
+###
+
+GET http://127.0.0.1:3000/url/b59abc1f-7996-4a83-9566-21dc311db70f
+
+###
+
+GET http://127.0.0.1:3000/url/cef41f14-3b94-4c3a-be91-1c40c5630f58/details
+
+###
+
+GET http://127.0.0.1:3000/4ICPZv1
